@@ -1,0 +1,59 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 64;
+    }
+
+    function isValidEstimateRequest(data) {
+      return data.keys().hasAll(['confirmationCode', 'service', 'fullName', 'phone', 'zipCode', 'createdAt'])
+        && data.keys().hasOnly(['confirmationCode', 'service', 'fullName', 'phone', 'email', 'address', 'zipCode', 'preferredDate', 'isUrgent', 'details', 'status', 'createdAt'])
+        && data.confirmationCode is string && data.confirmationCode.size() <= 32
+        && data.service is string && data.service.size() <= 100
+        && data.fullName is string && data.fullName.size() >= 2 && data.fullName.size() <= 100
+        && data.phone is string && data.phone.size() >= 7 && data.phone.size() <= 30
+        && data.zipCode is string && data.zipCode.size() >= 4 && data.zipCode.size() <= 10
+        && data.createdAt is string && data.createdAt.size() <= 40
+        && (!('email' in data) || (data.email is string && data.email.size() <= 100))
+        && (!('address' in data) || (data.address is string && data.address.size() <= 200))
+        && (!('preferredDate' in data) || (data.preferredDate is string && data.preferredDate.size() <= 30))
+        && (!('isUrgent' in data) || (data.isUrgent is bool))
+        && (!('details' in data) || (data.details is string && data.details.size() <= 1000))
+        && (!('status' in data) || (data.status in ['pending', 'contacted', 'scheduled', 'completed']));
+    }
+
+    function isValidCustomerReview(data) {
+      return data.keys().hasAll(['author', 'location', 'service', 'rating', 'text', 'createdAt'])
+        && data.keys().hasOnly(['author', 'location', 'service', 'rating', 'date', 'text', 'verified', 'createdAt'])
+        && data.author is string && data.author.size() >= 2 && data.author.size() <= 80
+        && data.location is string && data.location.size() <= 100
+        && data.service is string && data.service.size() <= 100
+        && (data.rating is int || data.rating is float) && data.rating >= 1 && data.rating <= 5
+        && data.text is string && data.text.size() >= 5 && data.text.size() <= 1000
+        && data.createdAt is string && data.createdAt.size() <= 40
+        && (!('verified' in data) || (data.verified is bool))
+        && (!('date' in data) || (data.date is string && data.date.size() <= 50));
+    }
+
+    // Connection testing endpoint
+    match /test/{testId} {
+      allow get: if true;
+    }
+
+    // Customer estimate requests
+    match /estimateRequests/{requestId} {
+      allow get, list: if false;
+      allow create: if isValidId(requestId) && isValidEstimateRequest(request.resource.data);
+      allow update, delete: if false;
+    }
+
+    // Customer reviews & testimonials
+    match /customerReviews/{reviewId} {
+      allow get, list: if true;
+      allow create: if isValidId(reviewId) && isValidCustomerReview(request.resource.data);
+      allow update, delete: if false;
+    }
+  }
+}

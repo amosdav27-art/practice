@@ -1,0 +1,52 @@
+{
+  "entities": {
+    "estimateRequest": {
+      "title": "EstimateRequest",
+      "description": "Homeowner pool screen repair, rescreening, or exterior service estimate request",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "confirmationCode": { "type": "string" },
+        "service": { "type": "string" },
+        "fullName": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "address": { "type": "string" },
+        "zipCode": { "type": "string" },
+        "preferredDate": { "type": "string" },
+        "isUrgent": { "type": "boolean" },
+        "details": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "contacted", "scheduled", "completed"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["confirmationCode", "service", "fullName", "phone", "zipCode", "createdAt"]
+    },
+    "customerReview": {
+      "title": "CustomerReview",
+      "description": "Customer review and testimonial for Lessane Repairs",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "author": { "type": "string" },
+        "location": { "type": "string" },
+        "service": { "type": "string" },
+        "rating": { "type": "number" },
+        "date": { "type": "string" },
+        "text": { "type": "string" },
+        "verified": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["author", "location", "service", "rating", "text", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/estimateRequests/{requestId}": {
+      "schema": "estimateRequest",
+      "description": "Homeowner quote and estimate requests submitted through the site"
+    },
+    "/customerReviews/{reviewId}": {
+      "schema": "customerReview",
+      "description": "Customer reviews and testimonials"
+    }
+  }
+}

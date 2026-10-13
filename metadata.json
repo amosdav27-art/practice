@@ -1,0 +1,6 @@
+{
+  "name": "Lessane Installations and Repairs",
+  "description": "Central Florida's trusted specialist for pool screen repair, full rescreens, screen rooms, pool cage painting, house painting, and pressure washing based in Davenport, FL.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
